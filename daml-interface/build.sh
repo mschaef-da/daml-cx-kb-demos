@@ -13,6 +13,8 @@ function capture_package_id() {
     daml damlc inspect-dar --json "$1" | jq '.main_package_id'
 }
 
+_info "Capturing Daml package ID's."
+
 capture_package_id "${DAR_MODEL_V1}" > target/package-id-v1.json
 capture_package_id "${DAR_MODEL_V2}" > target/package-id-v2.json
 capture_package_id "${DAR_SCRIPTS}" > target/package-id-scripts.json

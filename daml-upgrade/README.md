@@ -28,7 +28,7 @@ a few packages you'll need to have installed.
 3. Run `./build-upgrade-model.sh` to build the edited upgrade model.
 4. Run `./start-ledger.sh` to start a local sandbox ledger. This will
    also populate the ledger with 3,000 contracts via a script defined
-   in `testv1`.
+   in `scripts`.
 5. Run `./run-upgrade.sh` to execute the migration. The individual
    steps of the migration will be printed to the terminal, along with
    status messages from the migration process.
