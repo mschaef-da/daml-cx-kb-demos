@@ -10,11 +10,25 @@ def alice_party_id():
     with open('target/parties.json') as f:
         return json.load(f)['alice']
 
+def package_id(filename):
+    with open(f'target/{filename}') as f:
+        return json.load(f)
+
+PACKAGE_ID_V1=package_id('package-id-v1.json')
+PACKAGE_ID_V2=package_id('package-id-v2.json')
+PACKAGE_ID_SCRIPTS=package_id('package-id-scripts.json')
+PACKAGE_ID_IFACE=package_id('package-id-iface.json')
+
+print('PACKAGE_ID_V1=', PACKAGE_ID_V1)
+print('PACKAGE_ID_V2=', PACKAGE_ID_V2)
+print('PACKAGE_ID_SCRIPTS=', PACKAGE_ID_SCRIPTS)
+print('PACKAGE_ID_IFACE=', PACKAGE_ID_IFACE)
+
+
 
 # tid='*'
-tid='bfbb3a82936cb29e7d9de8712dddbbb01653eec4e89e1ec69f17f23c6ba92e8f:Main:Point'
-# tid="a34d833806e62f585cfe1f110a93392bce88437898e8b91bf2c3f3ea69a36e57:ApplicationAPI:ICartesianCoordinate"
-# tid="ApplicationAPI:ICartesianCoordinate"
+tid=f'{PACKAGE_ID_V1}:Main:Point'
+# tid=f'{PACKAGE_ID_IFACE}:ApplicationAPI:ICartesianCoordinate'
 
 async def show_acs(conn):
     async with ACS(conn, {tid: {}}) as acs:

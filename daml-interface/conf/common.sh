@@ -2,6 +2,7 @@
 DAR_MODEL_V1=testv1/.daml/dist/test-0.0.1.dar
 DAR_MODEL_V2=testv2/.daml/dist/test-0.0.2.dar
 DAR_SCRIPTS=scripts/.daml/dist/test-scripts-0.0.1.dar
+DAR_IFACE=iface/.daml/dist/iface-0.0.1.dar
 
 # issue a user friendly red error and die
 function _error(){
