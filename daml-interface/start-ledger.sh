@@ -5,11 +5,11 @@ set -euo pipefail
 source "conf/common.sh"
 
 if [ ! -f ${DAR_MODEL_V1} ]; then
-    _error "DAR file ${DAR_MODEL_V1} not found, run build-base-models-and-codegen.sh."
+    _error "DAR file ${DAR_MODEL_V1} not found, run build.sh."
 fi
 
 if [ ! -f ${DAR_MODEL_V2} ]; then
-    _error "DAR file ${DAR_MODEL_V2} not found, run build-base-models-and-codegen.sh."
+    _error "DAR file ${DAR_MODEL_V2} not found, run build.sh."
 fi
 
 mkdir -pv log
@@ -62,6 +62,6 @@ daml script --ledger-host localhost --ledger-port 6865 \
 
 _info "Ledger running and initialized.
 
-Run contract upgrade with ./run-upgrade.sh
+Run Python script with ./run-main.sh
 
 Stop the ledger with ./stop-ledger.sh"
