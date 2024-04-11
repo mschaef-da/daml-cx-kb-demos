@@ -1,0 +1,10 @@
+*#
+*~
+.daml/
+target/
+log/
+navigator.log
+upgrade-model
+alice_party_id
+hub-user-jwt.json
+parties.json

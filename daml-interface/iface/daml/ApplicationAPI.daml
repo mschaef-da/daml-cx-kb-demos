@@ -1,0 +1,21 @@
+module ApplicationAPI where
+
+
+data ICartesianCoordinateViewType = ICartesianCoordinateViewType
+  with
+    owner: Party
+    version: Int
+    x: Numeric 10
+    y: Numeric 10
+
+interface ICartesianCoordinate where
+  viewtype ICartesianCoordinateViewType
+
+  mirror : Party -> Update (ContractId ICartesianCoordinate)
+
+  choice Mirror : ContractId ICartesianCoordinate
+    with
+      owner : Party
+    controller (view this).owner
+    do
+      mirror this owner

@@ -1,0 +1,19 @@
+module Main where
+
+import ApplicationAPI (ICartesianCoordinate, ICartesianCoordinateViewType(ICartesianCoordinateViewType))
+
+template Point
+  with
+    owner  : Party
+    x      : Numeric 10
+    y      : Numeric 10
+  where
+    signatory owner
+
+    interface instance ICartesianCoordinate for Point where
+      view = ICartesianCoordinateViewType owner 1 x y
+      mirror owner = do
+        mirroredPoint <- create this with 
+                            x = -x
+                            y = -y
+        return (toInterfaceContractId mirroredPoint)
