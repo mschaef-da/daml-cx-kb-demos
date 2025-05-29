@@ -8,3 +8,5 @@ upgrade-model
 alice_party_id
 hub-user-jwt.json
 parties.json
+upgrade-runner.log
+migration-upgrade-*.jar

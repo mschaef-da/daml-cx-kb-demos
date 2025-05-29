@@ -22,87 +22,67 @@ mkdir -pv target
 
 function initialize_upgraders() {
     _info "Initializing upgraders."
-    cat <<EOF > target/initialize-upgraders.json
-{
-  "upgradeCoordinator": "$coordinator_party",
-  "upgraders": [
-    "$party_alice",
-    "$party_bob"
-  ]
-}
-EOF
 
-    daml script ${LEDGER_SCRIPT_CONNECTION} \
-         --dar ${DAR_MODEL_UPGRADE} \
-         --script-name "DA.DamlUpgrade.InitiateUpgrade:initializeUpgraders" \
-         --input-file target/initialize-upgraders.json
+    java -jar ${JAR_UPGRADE_RUNNER} initialize \
+         ${LEDGER_SCRIPT_CONNECTION} \
+         --upgrade-dar ${DAR_MODEL_UPGRADE} \
+         --upgrade-coordinator "${coordinator_party}" \
+         --upgrader "${party_alice}" \
+         --upgrader "${party_bob}"
 }
 
-function init_upgrader() {
-    _info "Initializing Upgrader Party: $1"
+function create_upgrade_proposals() {
+    _info "Creating upgrade proposals for Party: $1"
 
-    docker run ${DOCKER_CONFIG} "${DAML_UPGRADE_IMAGE}" \
-           java -jar upgrade-runner.jar init-upgrader \
-           --config ${UPGRADE_CONF} \
-           --upgrader "$1" \
-           --upgrade-package-id "$package_id" \
-           ${LEDGER_DOCKER_CONNECTION}
+    java -jar ${JAR_UPGRADE_RUNNER} initialize-upgrader \
+         ${LEDGER_SCRIPT_CONNECTION} \
+         --upgrade-dar ${DAR_MODEL_UPGRADE} \
+         --upgrader "$1"
 }
-
 
 function accept_upgrade_proposals() {
     _info "Accepting upgrade proposals for Party: $1"
-    cat <<EOF > target/accept-upgrade-parties.json
-[
-    "$1"
-]
-EOF
 
-    # Token used needs to be authorized for all parties listed in the input file.
-    daml script ${LEDGER_SCRIPT_CONNECTION} \
-         --dar ${DAR_MODEL_UPGRADE} \
-         --script-name "DA.DamlUpgrade.UpgradeConsent:acceptUpgradeProposalsScript" \
-         --input-file target/accept-upgrade-parties.json
+    java -jar ${JAR_UPGRADE_RUNNER} upgrade-consent \
+         ${LEDGER_SCRIPT_CONNECTION} \
+         --upgrade-dar ${DAR_MODEL_UPGRADE} \
+         --upgrade-coordinator "${coordinator_party}" \
+         --party "$1"
 }
 
 function run_upgrade() {
     _info "Running upgrade for party: $1"
 
-    docker run ${DOCKER_CONFIG} "${DAML_UPGRADE_IMAGE}" \
-           java -jar upgrade-runner.jar run-upgrade \
-           --config ${UPGRADE_CONF} \
-           --upgrader "$1" \
-           --upgrade-package-id "$package_id" \
-           ${LEDGER_DOCKER_CONNECTION}
+    java -jar ${JAR_UPGRADE_RUNNER} upgrade \
+         ${LEDGER_SCRIPT_CONNECTION} \
+         --upgrade-dar ${DAR_MODEL_UPGRADE} \
+         --upgrader "$1"
 }
 
 function upgrade_cleanup() {
     _info "Cleaning up upgrade state for party: $1"
+    java -jar ${JAR_UPGRADE_RUNNER} cleanup \
+         ${LEDGER_SCRIPT_CONNECTION} \
+         --upgrade-dar ${DAR_MODEL_UPGRADE} \
+         --upgrade-coordinator "${coordinator_party}" \
+         --upgrader "$1"
 
-    docker run ${DOCKER_CONFIG} "${DAML_UPGRADE_IMAGE}" \
-           java -jar upgrade-runner.jar cleanup \
-           --config ${CLEANUP_CONF} \
-           --upgrader "$1" \
-           --upgrade-package-id "$package_id" \
-           --batch-size 10 \
-           ${LEDGER_DOCKER_CONNECTION}
 }
 
 function upgrade_coordinator_cleanup() {
     _info "Cleaning up upgrade coordinator: $1"
 
-    echo "\"$1\"" > target/cleanup-status.json
-    daml script ${LEDGER_SCRIPT_CONNECTION} \
-         --dar ${DAR_MODEL_UPGRADE} \
-         --script-name "DA.DamlUpgrade.Status:cleanupStatus" \
-         --input-file target/cleanup-status.json
+    java -jar ${JAR_UPGRADE_RUNNER} upgrade-coordinator-cleanup \
+         ${LEDGER_SCRIPT_CONNECTION} \
+         --upgrade-dar ${DAR_MODEL_UPGRADE} \
+         --upgrade-coordinator "${coordinator_party}"
 }
 
 _info "Starting Upgrade"
 initialize_upgraders
 
-init_upgrader "${party_alice}"
-init_upgrader "${party_bob}"
+create_upgrade_proposals "${party_alice}"
+create_upgrade_proposals "${party_bob}"
 
 accept_upgrade_proposals "${party_alice}"
 accept_upgrade_proposals "${party_bob}"
