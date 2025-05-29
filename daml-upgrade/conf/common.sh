@@ -8,8 +8,10 @@ DAR_MODEL_UPGRADE=upgrade-model/.daml/dist/upgrade-project-1.0.0.dar
 
 UPGRADE_PACKAGE_ID=upgrade-model/package_id
 
-DOCKER_CONFIG="--platform=linux/amd64 --rm --network=host -v ./conf:/home/user/conf -v ./target:/home/user/target"
-DAML_UPGRADE_IMAGE="digitalasset-docker.jfrog.io/daml-upgrade:2.1.1"
+JAR_ARTIFACTORY_BASE_URL=https://digitalasset.jfrog.io/artifactory/daml-upgrade/3.4/3.4.2
+
+JAR_UPGRADE_CODEGEN=migration-upgrade-codegen-3.4.2.jar
+JAR_UPGRADE_RUNNER=migration-upgrade-runner-3.4.2.jar
 
 HUB_JWT_FILE="hub-user-jwt.json"
 
